@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import type { Catch, Gear, View, Listing, UserProfile } from './types';
 import Layout from './components/Layout';
@@ -10,6 +10,7 @@ import GearManager from './components/GearManager';
 import AIAssistant from './components/AIAssistant';
 import Marketplace from './components/Marketplace';
 import ProfileManager from './components/ProfileManager';
+import { initFirebase, syncCatchToCloud, fetchCloudCatches } from './services/firebaseService';
 
 const App: React.FC = () => {
     const [activeView, setActiveView] = useState<View>('dashboard');
@@ -23,6 +24,17 @@ const App: React.FC = () => {
         }
     });
     
+    // Cloud Sync Logic
+    useEffect(() => {
+        if (userProfile.firebaseConfig) {
+            const fb = initFirebase(userProfile.firebaseConfig);
+            if (fb) {
+                console.log("Ghillie Cloud Synchronized");
+                // Optional: Trigger full sync here
+            }
+        }
+    }, [userProfile.firebaseConfig]);
+
     const [listings, setListings] = useLocalStorage<Listing[]>('carpy_listings', [
         {
             id: 'demo_1',
@@ -40,23 +52,6 @@ const App: React.FC = () => {
             sellerId: 'demo_user',
             date: new Date().toISOString(),
             status: 'available'
-        },
-        {
-            id: 'demo_2',
-            title: 'Trakker Tempest Brolly 100',
-            description: 'Used for one season. Full infill panel and groundsheet included. Collection only.',
-            price: 150,
-            postagePrice: 0,
-            insuranceFee: 0,
-            shippingMethod: 'Collection Only',
-            isInsured: false,
-            isSplitShipping: false,
-            category: 'Bivvies',
-            condition: 'Good',
-            location: 'Midlands',
-            sellerId: 'user_123',
-            date: new Date().toISOString(),
-            status: 'available'
         }
     ]);
     
@@ -72,14 +67,19 @@ const App: React.FC = () => {
     });
     const [editingCatch, setEditingCatch] = useState<Catch | null>(null);
 
-    const addCatch = (newCatch: Catch) => {
-        if (editingCatch) {
-            setCatches(catches.map(c => c.id === newCatch.id ? newCatch : c));
-            setEditingCatch(null);
-        } else {
-            setCatches([newCatch, ...catches]);
-        }
+    const addCatch = async (newCatch: Catch) => {
+        const updatedCatches = editingCatch 
+            ? catches.map(c => c.id === newCatch.id ? newCatch : c)
+            : [newCatch, ...catches];
+        
+        setCatches(updatedCatches);
+        setEditingCatch(null);
         setActiveView('list');
+
+        // Background Cloud Sync if config exists
+        if (userProfile.firebaseConfig) {
+            await syncCatchToCloud("user_123", newCatch); 
+        }
     };
 
     const addListing = (newListing: Listing) => {

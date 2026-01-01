@@ -5,12 +5,13 @@ import {
     MarketIcon, SearchIcon, PriceIcon, GBPIcon, LocationIcon, ExternalIcon, 
     PlusIcon, XIcon, EscrowIcon, LockIcon, ShippingIcon, CheckIcon, HistoryIcon,
     WarningIcon, PackageIcon, InsuranceIcon, CheckoutIcon, PlayIcon, VerifiedIcon,
-    SplitIcon
+    SplitIcon, FilterIcon
 } from './icons';
 import ListingForm from './ListingForm';
 
 const UK_REGIONS = ["South East", "South West", "London", "Midlands", "North West", "North East", "Wales", "Scotland"];
 const CATEGORIES = ["Rods", "Reels", "Alarms", "Bivvies", "Furniture", "Luggage", "Terminal Tackle"];
+const CONDITIONS = ["New", "Like New", "Good", "Used"];
 
 const BUYER_TRANSACTION_FEE = 1.00;
 
@@ -24,16 +25,28 @@ const Marketplace: React.FC<MarketplaceProps> = ({ listings, addListing, updateL
     const [search, setSearch] = useState('');
     const [region, setRegion] = useState('All');
     const [category, setCategory] = useState('All');
+    const [conditionFilter, setConditionFilter] = useState('All');
     const [isAdding, setIsAdding] = useState(false);
     const [activeTab, setActiveTab] = useState<'browse' | 'transactions'>('browse');
     const [viewingVideo, setViewingVideo] = useState<string | null>(null);
 
     const filteredListings = listings.filter(l => {
         if (activeTab === 'browse') {
-            const matchesSearch = l.title.toLowerCase().includes(search.toLowerCase()) || l.description.toLowerCase().includes(search.toLowerCase());
+            const searchLower = search.toLowerCase();
+            const searchTokens = searchLower.split(/\s+/).filter(t => t.length > 0);
+            
+            // Enhanced multi-token partial matching: all words must be found in at least one field
+            const matchesSearch = searchTokens.every(token => 
+                l.title.toLowerCase().includes(token) || 
+                l.description.toLowerCase().includes(token) ||
+                l.category.toLowerCase().includes(token)
+            );
+            
             const matchesRegion = region === 'All' || l.location === region;
             const matchesCategory = category === 'All' || l.category === category;
-            return matchesSearch && matchesRegion && matchesCategory && l.status === 'available';
+            const matchesCondition = conditionFilter === 'All' || l.condition === conditionFilter;
+            
+            return matchesSearch && matchesRegion && matchesCategory && matchesCondition && l.status === 'available';
         }
         return l.status !== 'available';
     });
@@ -89,15 +102,17 @@ const Marketplace: React.FC<MarketplaceProps> = ({ listings, addListing, updateL
         }
     };
 
+    const filterSelectClasses = "bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-300 outline-none focus:border-cyan-500 transition-all cursor-pointer hover:bg-slate-800";
+
     return (
         <div className="space-y-6 pb-24">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-slate-800 rounded-lg">
+                    <div className="p-2 bg-slate-800 rounded-lg shadow-inner">
                         <MarketIcon className="w-8 h-8 text-cyan-400" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-white tracking-tight">Tackle Exchange</h2>
+                        <h2 className="text-2xl font-bold text-white tracking-tight uppercase tracking-tighter">Tackle Exchange</h2>
                         <div className="flex items-center gap-1.5">
                             <VerifiedIcon className="w-3 h-3 text-emerald-400" />
                             <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Video Verified Gear</p>
@@ -106,16 +121,61 @@ const Marketplace: React.FC<MarketplaceProps> = ({ listings, addListing, updateL
                 </div>
                 <button 
                     onClick={() => setIsAdding(true)}
-                    className="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow-lg transition-all active:scale-95"
+                    className="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 shadow-lg shadow-cyan-900/20 transition-all active:scale-95"
                 >
-                    <PlusIcon className="w-5 h-5" />
+                    <PlusIcon className="w-4 h-4" />
                     List Item
                 </button>
             </div>
 
-            <div className="flex gap-2 p-1 bg-slate-800/50 rounded-xl border border-slate-700 w-fit">
-                <button onClick={() => setActiveTab('browse')} className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'browse' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}><SearchIcon className="w-4 h-4" />Browse</button>
-                <button onClick={() => setActiveTab('transactions')} className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'transactions' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}><HistoryIcon className="w-4 h-4" />Activity</button>
+            <div className="flex flex-col gap-4">
+                <div className="flex gap-2 p-1 bg-slate-800/50 rounded-xl border border-slate-700 w-fit">
+                    <button onClick={() => setActiveTab('browse')} className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${activeTab === 'browse' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}><SearchIcon className="w-4 h-4" />Browse</button>
+                    <button onClick={() => setActiveTab('transactions')} className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${activeTab === 'transactions' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}><HistoryIcon className="w-4 h-4" />Activity</button>
+                </div>
+
+                {activeTab === 'browse' && (
+                    <div className="space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-slate-800/40 p-4 rounded-2xl border border-slate-700/50">
+                            <div className="md:col-span-1 relative group">
+                                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
+                                <input 
+                                    type="text" 
+                                    value={search} 
+                                    onChange={e => setSearch(e.target.value)} 
+                                    placeholder="Search gear (e.g. shimano reels)..." 
+                                    className="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 pl-10 pr-4 text-xs font-bold text-white outline-none focus:border-cyan-500 transition-all"
+                                />
+                            </div>
+                            <select value={category} onChange={e => setCategory(e.target.value)} className={filterSelectClasses}>
+                                <option value="All">All Categories</option>
+                                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                            <select value={region} onChange={e => setRegion(e.target.value)} className={filterSelectClasses}>
+                                <option value="All">All Regions</option>
+                                {UK_REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                            </select>
+                            <select value={conditionFilter} onChange={e => setConditionFilter(e.target.value)} className={filterSelectClasses}>
+                                <option value="All">Any Condition</option>
+                                {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                        </div>
+                        <div className="flex gap-2 items-center px-1">
+                            <button 
+                                onClick={() => setConditionFilter(conditionFilter === 'Used' ? 'All' : 'Used')}
+                                className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border ${conditionFilter === 'Used' ? 'bg-cyan-600 text-white border-cyan-500' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'}`}
+                            >
+                                Used Gear Only
+                            </button>
+                            <button 
+                                onClick={() => setConditionFilter(conditionFilter === 'New' ? 'All' : 'New')}
+                                className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all border ${conditionFilter === 'New' ? 'bg-cyan-600 text-white border-cyan-500' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'}`}
+                            >
+                                Brand New Only
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -237,7 +297,16 @@ const Marketplace: React.FC<MarketplaceProps> = ({ listings, addListing, updateL
                 )) : (
                     <div className="col-span-full py-20 text-center bg-slate-800/20 rounded-3xl border border-dashed border-slate-700">
                         <PackageIcon className="w-16 h-16 text-slate-800 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-slate-500">No activity yet.</h3>
+                        <h3 className="text-xl font-bold text-slate-500">No gear matches your search.</h3>
+                        <p className="text-slate-400 text-sm mt-1">Try adjusting your filters or conditions.</p>
+                        {(search || category !== 'All' || region !== 'All' || conditionFilter !== 'All') && (
+                            <button 
+                                onClick={() => { setSearch(''); setCategory('All'); setRegion('All'); setConditionFilter('All'); }}
+                                className="mt-4 text-cyan-400 font-bold uppercase tracking-widest text-xs hover:text-cyan-300"
+                            >
+                                Reset All Filters
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

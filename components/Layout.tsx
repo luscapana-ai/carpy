@@ -1,7 +1,7 @@
 
 import React from 'react';
 import type { View } from '../types';
-import { DashboardIcon, ListIcon, LogIcon, GearIcon, BookOpenIcon, FishIcon, MarketIcon, UserIcon } from './icons';
+import { DashboardIcon, ListIcon, LogIcon, GearIcon, AIIcon, FishIcon, MarketIcon, UserIcon } from './icons';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -14,8 +14,8 @@ const navItems = [
     { id: 'dashboard', label: 'Dash', icon: DashboardIcon },
     { id: 'list', label: 'Log', icon: ListIcon },
     { id: 'log', label: 'Catch', icon: LogIcon },
+    { id: 'ai', label: 'Lab', icon: AIIcon },
     { id: 'marketplace', label: 'Market', icon: MarketIcon },
-    { id: 'profile', label: 'Me', icon: UserIcon },
 ];
 
 const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, setEditingCatch }) => {
@@ -35,9 +35,18 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, se
                         <FishIcon className="w-8 h-8 text-cyan-400"/>
                         <h1 className="text-2xl font-bold text-white tracking-tight">Carpy<span className="text-cyan-500">AI</span></h1>
                     </div>
-                    <div className="bg-slate-900/50 px-3 py-1 rounded-full border border-slate-700 flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ghillie Online</span>
+                    
+                    <div className="flex items-center gap-3">
+                        <div className="hidden sm:flex bg-slate-900/50 px-3 py-1 rounded-full border border-slate-700 items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ghillie Online</span>
+                        </div>
+                        <button 
+                            onClick={() => setActiveView('profile')}
+                            className={`p-2 rounded-xl border transition-all ${activeView === 'profile' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'}`}
+                        >
+                            <UserIcon className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
             </header>

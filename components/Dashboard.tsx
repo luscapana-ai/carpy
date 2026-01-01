@@ -3,8 +3,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getWeatherForecast, getAIAdvice } from '../services/geminiService';
 import type { Catch } from '../types';
 import type { ForecastData, TodayForecastData, SimpleForecastData, BriefingAdvice, WeatherIconType } from '../services/geminiService';
-// Fix: Use SunIcon instead of Sun which is not exported from icons.tsx
-import { SunIcon, CloudIcon, WeatherIcon, CloudSunIcon, CloudRainIcon, SnowflakeIcon, ThunderstormIcon, LocationIcon, WindIcon, GaugeIcon, SunriseIcon, SunsetIcon, NavigationArrowIcon, FishIcon, GearIcon, TacticsIcon, SproutIcon, SendIcon, BotIcon, UserIcon, CopyIcon, CheckIcon, AIIcon, XIcon, TrendsIcon } from './icons';
+import { 
+    SunIcon, CloudIcon, WeatherIcon, CloudSunIcon, CloudRainIcon, SnowflakeIcon, 
+    ThunderstormIcon, LocationIcon, WindIcon, GaugeIcon, SunriseIcon, SunsetIcon, 
+    NavigationArrowIcon, FishIcon, GearIcon, TacticsIcon, SproutIcon, SendIcon, 
+    BotIcon, UserIcon, CopyIcon, CheckIcon, AIIcon, XIcon, TrendsIcon, BookOpenIcon, 
+    WavesIcon, FishCareIcon 
+} from './icons';
 import TrendsDashboard from './TrendsDashboard';
 import HotspotExplorer from './HotspotExplorer';
 
@@ -181,7 +186,6 @@ const Dashboard: React.FC<DashboardProps> = ({ catches }) => {
                             : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700'
                         }`}
                     >
-                        {/* Fix: Use SunIcon instead of Sun */}
                         <SunIcon className="w-4 h-4" />
                         {isBankside ? 'Normal Mode' : 'Bankside Mode'}
                     </button>
@@ -233,6 +237,43 @@ const Dashboard: React.FC<DashboardProps> = ({ catches }) => {
                     </div>
                 </>
             ) : null}
+
+            {/* Tactical Library Quick Links */}
+            {!isBankside && (
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                        <BookOpenIcon className="w-6 h-6 text-cyan-400" />
+                        <h2 className="text-xl font-black text-white">Tactical Library</h2>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                        <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 hover:border-cyan-500 transition-all cursor-pointer group">
+                            <SproutIcon className="w-8 h-8 text-purple-400 mb-2 group-hover:scale-110 transition-transform" />
+                            <h4 className="text-xs font-bold text-white">Baits</h4>
+                            <p className="text-[9px] text-slate-500 uppercase font-black">Choosing Feed</p>
+                        </div>
+                        <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 hover:border-cyan-500 transition-all cursor-pointer group">
+                            <GearIcon className="w-8 h-8 text-cyan-400 mb-2 group-hover:scale-110 transition-transform" />
+                            <h4 className="text-xs font-bold text-white">Rigs</h4>
+                            <p className="text-[9px] text-slate-500 uppercase font-black">Presentations</p>
+                        </div>
+                         <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 hover:border-blue-500 transition-all cursor-pointer group">
+                            <WavesIcon className="w-8 h-8 text-blue-400 mb-2 group-hover:scale-110 transition-transform" />
+                            <h4 className="text-xs font-bold text-white">Rivers</h4>
+                            <p className="text-[9px] text-slate-500 uppercase font-black">Reading Flow</p>
+                        </div>
+                        <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 hover:border-orange-500 transition-all cursor-pointer group">
+                            <TacticsIcon className="w-8 h-8 text-orange-400 mb-2 group-hover:scale-110 transition-transform" />
+                            <h4 className="text-xs font-bold text-white">Watercraft</h4>
+                            <p className="text-[9px] text-slate-500 uppercase font-black">Finding Fish</p>
+                        </div>
+                        <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 hover:border-emerald-500 transition-all cursor-pointer group">
+                            <FishCareIcon className="w-8 h-8 text-emerald-400 mb-2 group-hover:scale-110 transition-transform" />
+                            <h4 className="text-xs font-bold text-white">Care</h4>
+                            <p className="text-[9px] text-slate-500 uppercase font-black">Welfare</p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <HotspotExplorer catches={catches} />
 
