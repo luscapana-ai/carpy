@@ -1,0 +1,14 @@
+{
+  "name": "Carpy AI",
+  "short_name": "Carpy",
+  "description": "A comprehensive carp fishing app to log your catches, manage your gear, and get expert tactical advice. Features AI Scout image analysis and Hands-Free Voice Logging.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0891b2",
+  "requestFramePermissions": [
+    "geolocation",
+    "microphone",
+    "camera"
+  ]
+}
