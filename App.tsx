@@ -10,7 +10,7 @@ import GearManager from './components/GearManager';
 import AIAssistant from './components/AIAssistant';
 import Marketplace from './components/Marketplace';
 import ProfileManager from './components/ProfileManager';
-import { initFirebase, syncCatchToCloud, fetchCloudCatches } from './services/firebaseService';
+import { initFirebase, syncCatchToCloud } from './services/firebaseService';
 
 const App: React.FC = () => {
     const [activeView, setActiveView] = useState<View>('dashboard');
@@ -27,11 +27,7 @@ const App: React.FC = () => {
     // Cloud Sync Logic
     useEffect(() => {
         if (userProfile.firebaseConfig) {
-            const fb = initFirebase(userProfile.firebaseConfig);
-            if (fb) {
-                console.log("Ghillie Cloud Synchronized");
-                // Optional: Trigger full sync here
-            }
+            initFirebase(userProfile.firebaseConfig);
         }
     }, [userProfile.firebaseConfig]);
 
@@ -128,7 +124,12 @@ const App: React.FC = () => {
     };
 
     return (
-        <Layout activeView={activeView} setActiveView={setActiveView} setEditingCatch={setEditingCatch}>
+        <Layout 
+            activeView={activeView} 
+            setActiveView={setActiveView} 
+            setEditingCatch={setEditingCatch}
+            userProfile={userProfile}
+        >
             {renderView()}
         </Layout>
     );

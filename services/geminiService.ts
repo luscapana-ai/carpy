@@ -160,12 +160,15 @@ export const generateRigBlueprint = async (description: string) => {
 export const processVoiceCatch = async (audioBase64: string) => {
     try {
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        // CORRECTED: Wrapped content parts in a single object as per API spec
         const response = await ai.models.generateContent({
             model: MODEL_NAME,
-            contents: [
-                { inlineData: { mimeType: "audio/wav", data: cleanBase64(audioBase64) } },
-                { text: "Parse this verbal fishing report into a JSON object. Fields: species, lbs, oz, bait, rig, notes." }
-            ],
+            contents: {
+                parts: [
+                    { inlineData: { mimeType: "audio/wav", data: cleanBase64(audioBase64) } },
+                    { text: "Parse this verbal fishing report into a JSON object. Fields: species, lbs, oz, bait, rig, notes." }
+                ]
+            },
             config: {
                 responseMimeType: "application/json",
                 responseSchema: {

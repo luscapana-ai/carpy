@@ -1,13 +1,14 @@
 
 import React from 'react';
-import type { View } from '../types';
-import { DashboardIcon, ListIcon, LogIcon, GearIcon, AIIcon, FishIcon, MarketIcon, UserIcon } from './icons';
+import type { View, UserProfile } from '../types';
+import { DashboardIcon, ListIcon, LogIcon, GearIcon, AIIcon, FishIcon, MarketIcon, UserIcon, ShieldCheck } from './icons';
 
 interface LayoutProps {
     children: React.ReactNode;
     activeView: View;
     setActiveView: (view: View) => void;
     setEditingCatch: (c: null) => void;
+    userProfile?: UserProfile;
 }
 
 const navItems = [
@@ -18,7 +19,7 @@ const navItems = [
     { id: 'marketplace', label: 'Market', icon: MarketIcon },
 ];
 
-const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, setEditingCatch }) => {
+const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, setEditingCatch, userProfile }) => {
     
     const handleNavClick = (view: View) => {
         if(view === 'log') {
@@ -26,6 +27,8 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, se
         }
         setActiveView(view);
     }
+
+    const isCloudConnected = !!userProfile?.firebaseConfig;
     
     return (
         <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col">
@@ -38,8 +41,17 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setActiveView, se
                     
                     <div className="flex items-center gap-3">
                         <div className="hidden sm:flex bg-slate-900/50 px-3 py-1 rounded-full border border-slate-700 items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ghillie Online</span>
+                            {isCloudConnected ? (
+                                <>
+                                    <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Cloud Vault Active</span>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="w-2 h-2 bg-slate-600 rounded-full"></div>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Local Mode</span>
+                                </>
+                            )}
                         </div>
                         <button 
                             onClick={() => setActiveView('profile')}

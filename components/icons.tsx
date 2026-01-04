@@ -132,5 +132,6 @@ export const VideoIcon = Video;
 export const PlayIcon = Play;
 export const VerifiedIcon = BadgeCheck;
 export const SplitIcon = Users;
-// Add Sparkles export
-export { Sparkles };
+
+// Re-export specific icons needed by name
+export { Sparkles, ShieldCheck };

@@ -12,21 +12,28 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
         }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
-    "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
-    "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
-    "firebase/": "https://esm.sh/firebase@^12.7.0/"
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react/jsx-runtime": "https://esm.sh/react@19.0.0/jsx-runtime",
+    "@google/genai": "https://esm.sh/@google/genai@1.30.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.475.0",
+    "recharts": "https://esm.sh/recharts@2.15.1",
+    "firebase/app": "https://esm.sh/firebase@11.3.1/app",
+    "firebase/firestore": "https://esm.sh/firebase@11.3.1/firestore",
+    "firebase/auth": "https://esm.sh/firebase@11.3.1/auth",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "firebase/": "https://esm.sh/firebase@^12.7.0/",
+    "vite": "https://esm.sh/vite@^7.3.0"
   }
 }
 </script>
